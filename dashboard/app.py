@@ -19,17 +19,27 @@ st.title("📈 Real-Time Crypto Market Analytics")
 st_autorefresh(interval=30_000, key="auto_refresh")
 
 # -----------------------------
-# DuckDB Connection (SAFE)
+# DuckDB Connection (S3 SAFE)
 # -----------------------------
 @st.cache_resource
 def get_connection():
     con = duckdb.connect()
 
-    # Enable S3 support
+    # Enable DuckDB S3 support
     con.execute("INSTALL httpfs;")
     con.execute("LOAD httpfs;")
 
-    # DuckDB automatically uses AWS_* env vars
+    # Configure S3 using Streamlit secrets
+    con.execute(f"""
+        SET s3_region='{st.secrets["AWS_REGION"]}';
+    """)
+    con.execute(f"""
+        SET s3_access_key_id='{st.secrets["AWS_ACCESS_KEY_ID"]}';
+    """)
+    con.execute(f"""
+        SET s3_secret_access_key='{st.secrets["AWS_SECRET_ACCESS_KEY"]}';
+    """)
+
     return con
 
 con = get_connection()
@@ -48,13 +58,13 @@ def load_symbols():
 symbols_df = load_symbols()
 
 if symbols_df.empty:
-    st.error("No symbols found in analytics data yet.")
+    st.error("No analytics data found yet in S3.")
     st.stop()
 
 symbols = symbols_df["symbol"].tolist()
 
 # -----------------------------
-# Sidebar
+# Sidebar Filters
 # -----------------------------
 st.sidebar.header("Filters")
 selected_symbol = st.sidebar.selectbox("Select Symbol", symbols)
@@ -65,18 +75,18 @@ selected_symbol = st.sidebar.selectbox("Select Symbol", symbols)
 @st.cache_data(ttl=30)
 def load_analytics(symbol):
     query = f"""
-    SELECT
-        symbol,
-        struct_extract("window", 'start') AS window_start,
-        struct_extract("window", 'end')   AS window_end,
-        avg_price,
-        high,
-        low,
-        volume
-    FROM read_parquet('s3://smart-streaming-analytics/analytics/**/*.parquet')
-    WHERE symbol = '{symbol}'
-    ORDER BY window_start DESC
-    LIMIT 500
+        SELECT
+            symbol,
+            struct_extract("window", 'start') AS window_start,
+            struct_extract("window", 'end')   AS window_end,
+            avg_price,
+            high,
+            low,
+            volume
+        FROM read_parquet('s3://smart-streaming-analytics/analytics/**/*.parquet')
+        WHERE symbol = '{symbol}'
+        ORDER BY window_start DESC
+        LIMIT 500
     """
     return con.execute(query).df()
 
@@ -123,6 +133,7 @@ st.plotly_chart(fig_vol, use_container_width=True)
 # -----------------------------
 with st.expander("Show Raw Data"):
     st.dataframe(df, use_container_width=True)
+
 
 
 
