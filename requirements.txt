@@ -1,0 +1,7 @@
+streamlit
+streamlit-autorefresh
+duckdb
+plotly
+pyarrow
+s3fs
+boto3
