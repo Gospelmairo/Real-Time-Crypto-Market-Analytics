@@ -257,5 +257,6 @@ dashboard/app.py
 
 ## 👤 Author
 
-Mairo Gospel
+**Mairo Gospel**
+
 Data Engineer | Analytics Engineer
