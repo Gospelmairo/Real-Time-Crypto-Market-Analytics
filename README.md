@@ -98,6 +98,7 @@ Real-Time-Crypto-Market-Analytics/
 └── requirements.txt
 
 
+
 ## 🔄 Data Flow Explanation
 **1. Ingestion**
 * Live crypto trade data is pulled from Coinbase
