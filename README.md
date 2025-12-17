@@ -99,26 +99,45 @@ Real-Time-Crypto-Market-Analytics/
 
 
 ## 🔄 Data Flow Explanation
-1. Ingestion
+**1. Ingestion**
 * Live crypto trade data is pulled from Coinbase
 * Data is produced to Kafka topics
 
 
-2. Stream Processing
+**2. Stream Processing**
 * Spark Structured Streaming consumes Kafka data
 * Applies event-time windows and aggregations
 * Handles late data using watermarks
 * Writes aggregated analytics to S3 as Parquet
 
-3. Storage
 
+**3. Storage**
 * Data stored in AWS S3
-
 * Partitioned by symbol
-
 * Optimized for analytics queries
 
-4. Analytics & Visualization
+
+**4. Analytics & Visualization**
 * DuckDB queries Parquet files directly from S3
 * Streamlit dashboard renders metrics and charts
 * Auto-refresh enabled for near real-time updates
+
+
+## 🧪 Local Development Setup
+1️⃣ Clone Repository
+```bash
+git clone https://github.com/your-username/Real-Time-Crypto-Market-Analytics.git
+cd Real-Time-Crypto-Market-Analytics
+```
+
+2️⃣ Create Virtual Environment
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+3️⃣ Start Kafka & Infrastructure
+```bash
+docker-compose up -d
+```
