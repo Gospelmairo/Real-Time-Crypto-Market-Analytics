@@ -14,3 +14,11 @@ dashboard/.streamlit/secrets.toml
 # OS
 .DS_Store
 
+# Spark Checkpoints and Metadata
+checkpoints/
+storage/checkpoints/
+spark-warehouse/
+derby.log
+metastore_db/
+*.crc
+*.tmp

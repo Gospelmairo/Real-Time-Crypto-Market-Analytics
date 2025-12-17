@@ -45,7 +45,7 @@ raw_df = (
     .format("kafka")
     .option("kafka.bootstrap.servers", KAFKA_BROKER)
     .option("subscribe", KAFKA_TOPIC_RAW)
-    .option("startingOffsets", "earliest")
+    .option("startingOffsets", "latest")
     .load()
 )
 
