@@ -99,8 +99,9 @@ Real-Time-Crypto-Market-Analytics/
 
 
 
+
 ## 🔄 Data Flow Explanation
-**1. Ingestion**
+**1. Ingestion** 
 * Live crypto trade data is pulled from Coinbase
 * Data is produced to Kafka topics
 
@@ -142,3 +143,119 @@ pip install -r requirements.txt
 ```bash
 docker-compose up -d
 ```
+
+4️⃣ Run Kafka Producer
+```bash
+python ingestion/coinbase_producer.py
+```
+
+5️⃣ Run Spark Streaming Jobs
+```bash
+spark-submit \
+  --packages org.apache.spark:spark-sql-kafka-0-10_2.13:4.0.1 \
+  spark/clean_trades.py
+```
+
+```bash
+spark-submit \
+  --packages \
+  org.apache.spark:spark-sql-kafka-0-10_2.13:4.0.1,\
+org.apache.hadoop:hadoop-aws:3.4.1,\
+com.amazonaws:aws-java-sdk-bundle:1.12.262 \
+  spark/analytics_trades.py
+```
+
+6️⃣ Run Dashboard Locally
+```bash
+cd dashboard
+streamlit run app.py
+```
+
+### ☁️ AWS S3 Configuration
+Data is written to:
+```bash
+s3://smart-streaming-analytics/analytics/
+```
+
+Spark writes partitioned Parquet files:
+
+analytics/
+├── symbol=BTC-USD/
+├── symbol=ETH-USD/
+└── _spark_metadata/
+
+
+## 🔐 Streamlit Cloud Deployment
+
+
+1️⃣ Push Project to GitHub
+```bash
+git add .
+git commit -m "Initial commit - real-time crypto analytics platform"
+git push origin master
+```
+
+2️⃣ Configure Secrets (Streamlit Cloud)
+Create the file:
+```bash
+dashboard/.streamlit/secrets.toml
+```
+
+```bash
+AWS_ACCESS_KEY_ID = "YOUR_AWS_KEY"
+AWS_SECRET_ACCESS_KEY = "YOUR_AWS_SECRET"
+AWS_DEFAULT_REGION = "us-east-1"
+```
+
+3️⃣ Deploy on Streamlit Cloud
+
+* Go to https://streamlit.io/cloud
+
+* Connect GitHub repo
+
+* Set app path to:
+```bash
+dashboard/app.py
+```
+
+* Deploy
+
+## 📊 Dashboard Features
+- Symbol selector (BTC, ETH, etc.)
+- Real-time metrics:
+    - Average price
+    - High
+    - Low
+    - Volume
+- Time-series price chart
+- Volume bar chart
+- Auto-refresh for live updates
+- Raw data viewer
+
+## 📈 Use Cases
+* Real-time financial market monitoring
+* Streaming analytics pipelines
+* Data engineering portfolio project
+* Lakehouse-style analytics architecture
+* Cloud-native dashboards
+
+## 🧠 What This Project Demonstrates
+* Real-time data ingestion & streaming
+* Event-time processing & watermarking
+* Fault-tolerant Spark pipelines
+* Querying data lakes without a warehouse
+* Production-ready analytics dashboards
+* Cloud deployment & configuration
+
+## 🚀 Future Improvements
+
+* Add anomaly detection on price spikes
+* Integrate alerts (Slack / Email)
+* Add more exchanges
+* Optimize Parquet with Z-Ordering
+* Add CI/CD pipeline
+
+## 👤 Author
+
+Mairo Gospel
+Data Engineer | Analytics Engineer
