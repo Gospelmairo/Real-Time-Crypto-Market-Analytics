@@ -47,8 +47,7 @@ Streamlit Dashboard
 ```
 
 ## Tech Stack
-Streaming & Processing
-
+#### Streaming & Processing
 * Apache Kafka
 * Apache Spark (Structured Streaming)
 
@@ -60,3 +59,66 @@ Streaming & Processing
 #### Dashboard
 * Streamlit
 * Plotly
+
+#### Infrastructure
+* Docker & Docker Compose
+* AWS
+* Python 3.11+
+
+## 📁 Project Structure
+Real-Time-Crypto-Market-Analytics/
+│
+├── dashboard/                     # Streamlit dashboard
+│   ├── .streamlit/
+│   │   └── secrets.toml           # AWS credentials (Streamlit Cloud)
+│   ├── app.py                     # Main dashboard app
+│   └── test.py
+│
+├── ingestion/                     # Kafka producer
+│   ├── coinbase_producer.py
+│   └── config.py
+│
+├── kafka/                         # Kafka configuration
+│
+├── spark/                         # Spark streaming jobs
+│   ├── analytics_trades.py
+│   ├── clean_trades.py
+│   └── sql/
+│       └── market_sql_analytics.py
+│
+├── storage/
+│   ├── analytics/                 # S3 analytics output
+│   └── checkpoints/               # Spark checkpoints
+│
+├── docker/
+│   └── docker-compose.yml
+│
+├── .gitignore
+├── README.md
+└── requirements.txt
+
+
+## 🔄 Data Flow Explanation
+1. Ingestion
+* Live crypto trade data is pulled from Coinbase
+* Data is produced to Kafka topics
+
+
+2. Stream Processing
+* Spark Structured Streaming consumes Kafka data
+* Applies event-time windows and aggregations
+* Handles late data using watermarks
+* Writes aggregated analytics to S3 as Parquet
+
+3. Storage
+
+* Data stored in AWS S3
+
+* Partitioned by symbol
+
+* Optimized for analytics queries
+
+4. Analytics & Visualization
+* DuckDB queries Parquet files directly from S3
+* Streamlit dashboard renders metrics and charts
+* Auto-refresh enabled for near real-time updates
