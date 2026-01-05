@@ -66,6 +66,7 @@ Streamlit Dashboard
 * Python 3.11+
 
 ## 📁 Project Structure
+```
 Real-Time-Crypto-Market-Analytics/
 │
 ├── dashboard/                     # Streamlit dashboard
@@ -96,6 +97,8 @@ Real-Time-Crypto-Market-Analytics/
 ├── .gitignore
 ├── README.md
 └── requirements.txt
+```
+---
 
 
 
